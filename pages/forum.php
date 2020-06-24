@@ -13,6 +13,12 @@
 			Site::redirect(INCLUDE_PATH.$slug.'/'.Site::generateSlug($_POST['nome']));
 		}
 	}
+	if(isset($_GET['deletar'])) {
+		$sql = MySql::conectar()->prepare("DELETE FROM `tb_forum.posts` WHERE topico_id = ?");
+		$sql->execute(array((int)$_GET['deletar']));
+		$sql = MySql::conectar()->prepare("DELETE FROM `tb_forum.topicos` WHERE id = ?");
+		$sql->execute(array((int)$_GET['deletar']));
+	}
 ?>
 <section class="registrar">
 	<h2>Criar tópico</h2>
@@ -47,6 +53,11 @@
 				<p><i class="fas fa-newspaper"></i> Fórum: <?php echo $forum['titulo']; ?></p>
 				<p><i class="fas fa-user-tie"></i> Último Post por: : <?php echo $ultimo_post['autor']; ?></p>
 				<p><i class="fas fa-newspaper"></i> Posts: <?php echo $posts; ?></p>
+				<?php
+				if(@$_SESSION['cargo'] >= 2) {
+				?>
+				<a href="<?php echo INCLUDE_PATH.$slug; ?>?deletar=<?php echo $value['id']; ?>">Deletar</a>
+			<?php } ?>
 			</div>
 			<div class="clear"></div>
 			<p><?php echo date('d/m/Y H:i:s',strtotime($value['data'])); ?></p>
